@@ -17,6 +17,14 @@
 import numpy as np
 import itertools
 from collections import OrderedDict
+import peewee
+import pickle
+
+def process_binary(dict_, Result):
+    for k in dict_:
+        if type(getattr(Result, k)) == peewee.BlobField:
+            if type(dict_[k]) != bytes:
+               dict_[k] = pickle.dumps(dict_[k])
 
 def do_simulation_study(to_sample, func, db, Result, max_count=1,
     sample_filter=None):
@@ -34,6 +42,8 @@ def do_simulation_study(to_sample, func, db, Result, max_count=1,
             continue
 
         # check count of rows in db
+        clean_dsample = dsample.copy()
+        process_binary(dsample, Result)
         query = Result.select().where(
             *[getattr(Result, x[0]) == x[1] for x in dsample.items()]
             )
@@ -43,7 +53,9 @@ def do_simulation_study(to_sample, func, db, Result, max_count=1,
             continue
         db.close()
 
-        func_res = func(**dsample)
+        func_res = func(**clean_dsample)
+        process_binary(func_res, Result)
+
         print("Results:")
         print({
             k:(v if type(v) != bytes else "binary blob")
