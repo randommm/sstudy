@@ -19,6 +19,7 @@ import itertools
 from collections import OrderedDict
 import peewee
 import pickle
+from time import time, sleep
 
 def process_binary(dict_, Result):
     for k in dict_:
@@ -51,16 +52,29 @@ def do_simulation_study(to_sample, func, db, Result, max_count=1,
         if query.count() >= max_count:
             full_sample.discard(sample)
             continue
-        db.close()
 
+        start_time = time()
         func_res = func(**clean_dsample)
         process_binary(func_res, Result)
 
-        print("Results:")
+        print("Result:")
         print({
             k:(v if type(v) != bytes else "binary blob")
             for k, v in func_res.items()
         })
 
+        # prevent disconnect failures in case on slow calculations
+        if time() - start_time >= 30:
+            db.close()
+            while True:
+                try:
+                    db.connect()
+                    break
+                except:
+                    print("Failed to connect to server")
+                    print("Will retry in 30 seconds")
+                    db.close()
+                    sleep(30)
+
         Result.create(**dsample, **func_res)
-        print("Result stored in the database", flush=True)
+        print("Result successfully stored in the database", flush=True)

@@ -22,7 +22,7 @@ except ImportError:
     from distutils.core import setup
 
 setup(name='sstudy',
-      version='0.0.2',
+      version='0.0.3',
       description='Simulation study storage',
       author='Marco Inacio',
       author_email='pythonpackages@marcoinacio.com',
