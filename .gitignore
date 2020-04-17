@@ -4,3 +4,4 @@ dist/*
 *.egg-info/
 MANIFEST
 *nn_flexcode_fs_cache
+*.sqlite3

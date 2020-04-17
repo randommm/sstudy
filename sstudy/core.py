@@ -37,10 +37,17 @@ def do_simulation_study(to_sample, func, db, Result, max_count=1,
         sample = np.random.choice(len(full_sample))
         sample = list(full_sample)[sample]
         dsample = dict(zip(keys, sample))
-        if sample_filter is not None and not sample_filter(**dsample):
-            #print("Discarded combination")
-            full_sample.discard(sample)
-            continue
+
+        if sample_filter is None:
+            this_max_count = max_count
+        else:
+            this_max_count = sample_filter(**dsample)
+            if not this_max_count:
+                #print("Discarded combination")
+                full_sample.discard(sample)
+                continue
+            elif isinstance(this_max_count, bool):
+                this_max_count = max_count
 
         # check count of rows in db
         clean_dsample = dsample.copy()
@@ -49,7 +56,7 @@ def do_simulation_study(to_sample, func, db, Result, max_count=1,
             *[getattr(Result, x[0]) == x[1] for x in dsample.items()]
             )
         print(len(full_sample), "combinations left")
-        if query.count() >= max_count:
+        if query.count() >= this_max_count:
             full_sample.discard(sample)
             continue
 
