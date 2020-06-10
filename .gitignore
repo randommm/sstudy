@@ -5,3 +5,6 @@ dist/*
 MANIFEST
 *nn_flexcode_fs_cache
 *.sqlite3
+*.pdf
+documentation
+

@@ -3,7 +3,7 @@ import pandas as pd
 from db_structure import Result, db
 
 df = pd.DataFrame(list(Result.select().dicts()))
-del(df['id'])
+del df['id']
 
 df.groupby(['data_distribution', 'no_instances', 'method']).mean()
 

@@ -9,7 +9,7 @@ from db_structure import Result, db
 no_simulations = 10
 
 to_sample = dict(
-    data_distribution = [0,1],
+    data_distribution = ["complete", "sparse"],
     no_instances = [100, 1000],
     method = ['ols', 'lasso'],
 )
@@ -22,11 +22,13 @@ def func(
 
     x = stats.norm.rvs(0, 2, size=(no_instances + 10000, 10))
     beta = stats.norm.rvs(0, 2, size=(10, 1))
-    eps = stats.norm.rvs(0, 3, size=(no_instances + 10000, 1))
-    if data_distribution == 0:
+    eps = stats.norm.rvs(0, 5, size=(no_instances + 10000, 1))
+    if data_distribution == "complete":
         y = np.matmul(x, beta) + eps
-    if data_distribution == 1:
+    elif data_distribution == "sparse":
         y = np.matmul(x[:,:5], beta[:5]) + eps
+    else:
+        raise ValueError
 
     y_train = y[:no_instances]
     y_test = y[no_instances:]
