@@ -26,6 +26,7 @@ class Result(Model):
     hidden_size = IntegerField()
     seed = IntegerField()
     dropout = BooleanField()
+    batch_normalization = BooleanField()
 
     # Results
     mse_train = DoubleField()

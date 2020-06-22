@@ -10,12 +10,14 @@ to_sample = dict(
     hidden_size = np.linspace(50, 500, 14),
     seed = range(1200),
     dropout = [False, True],
+    batch_normalization = [False, True],
 )
 
 def func(
     hidden_size,
     seed,
     dropout,
+    batch_normalization,
     ):
 
     torch.manual_seed(seed)
@@ -26,8 +28,8 @@ def func(
         hidden_size = hidden_size,
         num_layers = 2,
         batch_initial = 100,
-        dropout_rate = 0.5 if True else 0.0,
-        batch_normalization = True,
+        dropout_rate = 0.5 if dropout else 0.0,
+        batch_normalization = batch_normalization,
         optim_lr = 0.7,
         verbose=2,
         es_max_epochs = 100,
@@ -55,6 +57,7 @@ def sample_filter(
     hidden_size,
     seed,
     dropout,
+    batch_normalization,
     ):
 
     return True
